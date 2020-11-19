@@ -1,0 +1,37 @@
+parameters:
+  - name:                         stageName
+    type:                         string
+    default:                      Debug
+
+  - name:                         stageTitle
+    type:                         string
+    default:                      Debug Stage
+
+  - name:                         dependsOnStage
+    type:                         object
+    default:                      []
+
+  - name:                         appEnv
+    type:                         string
+    default:                      integration
+
+stages:
+  - stage:                        ${{ parameters.stageName }}
+    dependsOn:                    ${{ parameters.dependsOnStage }}
+    condition:                    succeeded()
+    pool:
+      vmImage:                    Ubuntu-latest
+    jobs:
+      - job:
+        displayName:              debug user parameters
+        steps:
+          - bash:                |
+              stringarray=($BUILD_REQUESTEDFOR)
+              userFirstName=$(echo ${stringarray[0],})
+              userNamespace=$(printf "%s-%s" '${{ parameters.appEnv }}' $userFirstName)
+              echo "##vso[task.setvariable variable=userNamespace]$userNamespace"
+          - bash:                |
+              echo "userNamespace '$(userNamespace)'"
+
+
+

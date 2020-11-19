@@ -31,59 +31,6 @@ trigger:              none
 
 name:                 "$(BuildID) sftp version ${{ parameters.SCF_SFTP_VERSION }}"
 stages:
-
-  - template:         jobs/deploy.yaml
+  - template:          pipelines/debug.yaml
     parameters:
-      stageName:      DeployDev
-      stageTitle:     "Deploy to Dev"
-      dockerImageTag: ${{ parameters.SCF_SFTP_VERSION }}
-      appEnv:         scf-ei-dev
-      azureSubscriptionEndpoint: 'SC_AKS_scf-k8s-dev-test3-we'
-
-  - template:         jobs/deploy.yaml
-    parameters:
-      stageName:      DeployTest
-      dependsOnStage:
-        - DeployDev
-      stageTitle:     "Deploy to Test"
-      dockerImageTag: ${{ parameters.SCF_SFTP_VERSION }}
-      appEnv:         scf-ei-test
-      azureSubscriptionEndpoint: 'SC_AKS_scf-k8s-dev-test3-we'
-
-  - template:         jobs/deploy.yaml
-    parameters:
-      stageName:      DeployAcc
-      stageTitle:     "Deploy to Acc"
-      dependsOnStage:
-        - DeployTest
-      dockerImageTag: ${{ parameters.SCF_SFTP_VERSION }}
-      appEnv:         scf-ei-acc
-      azureSubscriptionEndpoint: 'SC_AKS_scfeik8sacc-we'
-
-  - template:         jobs/approve.yaml
-    parameters:
-      stageName:      ApproveProdDeploy
-      stageTitle:     "Approve Deploy to Prod"
-      dependsOnStage:
-        - DeployAcc
-      appEnv:         scf-ei-prod
-
-  - template:         jobs/deploy.yaml
-    parameters:
-      stageName:      DeployProdWE
-      stageTitle:     "Deploy to Prod WE"
-      dependsOnStage:
-        - ApproveProdDeploy
-      dockerImageTag: ${{ parameters.SCF_SFTP_VERSION }}
-      appEnv:         scf-ei-prod-we
-      azureSubscriptionEndpoint: 'SC_AKS_scfeik8sprod-we'
-
-  - template:         jobs/deploy.yaml
-    parameters:
-      stageName:      DeployProdNE
-      stageTitle:     "Deploy to Prod NE"
-      dependsOnStage:
-        - ApproveProdDeploy
-      dockerImageTag: ${{ parameters.SCF_SFTP_VERSION }}
-      appEnv:         scf-ei-prod-ne
-      azureSubscriptionEndpoint: 'SC_AKS_scfeik8sprod-ne'
+      stageName:       Debug
